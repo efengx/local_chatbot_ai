@@ -1,0 +1,21 @@
+# env
+*.pyc
+.DS_Store
+.idea
+.vscode
+.env
+
+# language
+__pycache__
+.venv/
+models
+
+# local
+docs
+input
+docker
+db
+data
+
+# tmp
+*.ipynb

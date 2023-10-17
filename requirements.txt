@@ -1,0 +1,23 @@
+# development environment
+ipywidgets
+
+# Base: app dependency
+pinecone-client
+llama-index
+llama-hub
+pypdf
+sentence-transformers
+faiss-cpu
+ctransformers
+
+## Increment: llama index
+llama-cpp-python
+
+# UI: streamlit plug fastapi
+streamlit
+fastapi
+"uvicorn[standard]"
+
+# cache
+gptcache
+pymilvus
