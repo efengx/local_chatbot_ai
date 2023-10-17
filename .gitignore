@@ -2,7 +2,6 @@
 *.pyc
 .DS_Store
 .idea
-.vscode
 .env
 
 # language
@@ -18,4 +17,7 @@ db
 data
 
 # tmp
-*.ipynb
+fx_launch.ipynb
+fx_service.ipynb
+fx_env.ipynb
+*.sh

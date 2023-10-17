@@ -1,0 +1,14 @@
+# env
+.venv
+.github
+.vscode
+.docker-compose.yml
+.gitignore
+.tool-versions
+Dockerfile
+
+# project
+*.ipynb
+models
+db
+*.sh

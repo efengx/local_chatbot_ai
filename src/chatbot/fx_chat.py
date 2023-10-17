@@ -1,10 +1,10 @@
 import os
 import langchain
 from loguru import logger
-from langchain.callbacks import FileCallbackHandler
+# from langchain.callbacks import FileCallbackHandler
 from src.chatbot.fx_llamacpp import LlamaCpp
+from src.chatbot.fx_cache import FxCache
 from langchain.cache import GPTCache
-from src.chatbot.fx_cache import init_gptcache
 from src.chatbot.fx_open_llm import FxOpenAI
 from langchain.chains import LLMChain
 from src.chatbot.fx_chain_llm import FxLLMChain
@@ -18,23 +18,39 @@ load_dotenv()
 # logger.add(logfile, colorize=True, enqueue=True)
 # handler = FileCallbackHandler(logfile)
 
-class FxChat:
+class FxChat(object):
 
-    step: int = 0
-    model_type: str = ""
-
-    def _init(self):
-        print(f"FxChat._init")
-        
-        langchain.llm_cache = GPTCache(init_gptcache)
-        self.step = 1
-        self.load_llama2_chat_q4()
+    _instance = None
 
     def __init__(self):
-        print(f"FxChat.__init__: {self.step}")
-        self._init()
+        raise RuntimeError('Call instance() instead')
+    
+    @classmethod
+    def instance(cls):
+        if cls._instance is None:
+            print('Creating new instance FxChat')
+            cls._init(cls)
+            
+            cls._instance = cls.__new__(cls)
+            # Put any initialization here.
+        return cls._instance
+    
+    step: int = 0
+    model_type: str = ""
+    
+    def _init(self):
+        print(f"FxChat.init: {self.step}")
+        self._load_cache(self)
+        self._load_llama2_chat_q4(self)
 
-    def load_FxOpenAI(self):
+    def _load_cache(self):
+        print(f"FxChat._load_cache: {self.step}")
+        fxCache = FxCache.instance()
+        langchain.llm_cache = GPTCache(fxCache.fx_init_cache)                             # 组合结构
+        self.step = 1
+    
+    def _load_FxOpenAI(self):
+        print(f"FxChat._load_FxOpenAI: {self.step} {self.model_type}")
         if self.model_type == "FxOpenAI":
             return
 
@@ -45,7 +61,8 @@ class FxChat:
         self.llm = FxOpenAI(model_name="text-davinci-002", n=2, best_of=2)
         self.step = 2
 
-    def load_llama2_chat_q4(self):
+    def _load_llama2_chat_q4(self):
+        print(f"FxChat._load_llama2_chat_q4: {self.step} {self.model_type}")
         if self.model_type == "LlamaCpp":
             return
 
@@ -66,7 +83,7 @@ class FxChat:
         result = self.llm(text)
         return result
 
-    def chainllm(self, text):                                           # 智能链
+    def chainllm(self, text):                                           # 聊天链
         if self.step != 2:
             return "模型加载中请稍后!"
         

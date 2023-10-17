@@ -21,3 +21,4 @@ fastapi
 # cache
 gptcache
 pymilvus
+milvus                              # 嵌入式 milvus

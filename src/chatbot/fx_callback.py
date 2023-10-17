@@ -27,6 +27,7 @@ class FxStdOutCallbackHandler(BaseCallbackHandler):
 
     def on_llm_new_token(self, token: str, **kwargs: Any) -> None:
         """Do nothing."""
+        print("callback.on_llm_new_token")
         pass
 
     def on_llm_error(self, error: BaseException, **kwargs: Any) -> None:

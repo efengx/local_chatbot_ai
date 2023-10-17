@@ -1,10 +1,10 @@
-# local chat ai
+# local chatbot ai
 
 这是一个对于相似问题可以非常快响应的智能聊天ai。支持RAG（外部知识库检索增强）
 
 ## ⚡️ Quickstart
 
-...进行中...
+. 开启restapi服务
 
 ```shell
 $ uvicorn main_restapi:app --reload

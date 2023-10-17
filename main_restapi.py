@@ -6,11 +6,13 @@
 # feature: 抽象prompt结构, 并进行自定义
 # feature: 抽象llmresult结构, 并进行自定义
 from src.chatbot.fx_chat import FxChat
+from src.chatbot.fx_cache import FxCache
 from fastapi import FastAPI, HTTPException
 from fastapi.openapi.utils import get_openapi
 from pydantic import BaseModel
 
-fxChat = FxChat()
+fxCache = FxCache.instance()                                # 加载缓存环境（阻塞式）
+fxChat = FxChat.instance()                                  # 加载聊天机器人环境
 
 
 class Item(BaseModel):
@@ -26,7 +28,7 @@ async def predict(item: Item):
     print(f"result={result}")
     return {"message": result}
 
-@app.post("/chainllm/",  description="问答链")
+@app.post("/chainllm/",  description="酒店客服")
 async def chainllm(item: Item):
     result = fxChat.chainllm(item.question)
     return {"message": result}
@@ -35,10 +37,12 @@ async def chainllm(item: Item):
 async def cachePreloading():
     for data in open("input/hotelquestions.txt", "r"):
         print(data)
+    
+    fxCache.search()
     return {"message": ""}
 
 
-# openapi 元数据
+# openapi 基础文档结构
 def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema

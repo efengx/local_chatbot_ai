@@ -2,6 +2,9 @@
 import streamlit as st
 import requests
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 os.environ['AI_SERVICE'] = 'http://127.0.0.1:8000'
 
@@ -22,10 +25,7 @@ print(result['maxProgress'])
 
 # 侧边栏
 with st.sidebar:
-    add_radio = st.radio(
-        "Choose a shipping method",
-        ("Standard (5-15 days)", "Express (2-5 days)")
-    )
+    pass
 
 with st.form("form_query"):
     query = st.text_input("query")
