@@ -6,7 +6,6 @@
 
 支持RAG（外部知识库检索增强）.
 
-
 ## ⚡️ 快速开始
 
 . step1: 安装依赖
@@ -31,15 +30,10 @@ hf_hub_download(repo_id="TheBloke/Llama-2-13B-chat-GGUF",
 
 ```python
 # fx_data.ipynb
-from milvus import MilvusServer  # pylint: disable=import-outside-toplevel
+from src.local_milvus import LocalMilvus
 
-local_data="./db/milvus_data"
-port="19530"
-
-server = MilvusServer()
-server.set_base_dir(local_data)
-server.listen_port = int(port)
-server.start()
+localMilvus = LocalMilvus.instance()
+localMilvus.start()
 ```
 
 . step4: 开启restapi服务
