@@ -1,5 +1,7 @@
 # 校验：http://localhost:9091/healthz
 from milvus import MilvusServer
+from milvus import default_server
+from milvus import debug_server
 
 class LocalMilvus:
     _instance = None
@@ -22,10 +24,16 @@ class LocalMilvus:
         self.port="19530"
     
     def start(self):
-        self.server = MilvusServer()
-        self.server.set_base_dir(self.local_data)
-        self.server.listen_port = int(self.port)
-        self.server.start()
+        # 开启默认模式
+        default_server.set_base_dir('./db/milvus_data')
+        default_server.start()
+        print("start finish!")
+        # 开启debug模式
+        # debug_server.set_base_dir('./db/milvus_data')                       # 设置数据和日志的存储路径
+        # debug_server.start()
         
     def stop(self):
-        self.server.stop()
+        default_server.stop()
+        
+        # debug_server.stop()
+        

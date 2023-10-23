@@ -299,6 +299,8 @@ class LlamaCpp(LLM):
         else:
             params = self._get_parameters(stop)
             params = {**params, **kwargs}
+            
+            # 调用chatgpt
             result = self.client(prompt=prompt, **params)
             return result["choices"][0]["text"]
 

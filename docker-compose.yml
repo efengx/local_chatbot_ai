@@ -1,0 +1,7 @@
+sqliteweb:
+  image: tomdesinto/sqliteweb
+  ports:
+    - 8080:8080
+  volumes:
+    - ./localdb/sqlite.db:/db/sqlite.db
+  command: sqlite.db

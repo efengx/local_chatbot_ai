@@ -81,7 +81,7 @@ def _streaming_response_template() -> Dict[str, Any]:
 
 
 def _create_retry_decorator(
-    llm: Union[BaseOpenAI, OpenAIChat],
+    llm: Union[BaseOpenAI, FxOpenAIChat],
     run_manager: Optional[
         Union[AsyncCallbackManagerForLLMRun, CallbackManagerForLLMRun]
     ] = None,
@@ -101,7 +101,7 @@ def _create_retry_decorator(
 
 
 def completion_with_retry(
-    llm: Union[BaseOpenAI, OpenAIChat],
+    llm: Union[BaseOpenAI, FxOpenAIChat],
     run_manager: Optional[CallbackManagerForLLMRun] = None,
     **kwargs: Any,
 ) -> Any:
@@ -116,7 +116,7 @@ def completion_with_retry(
 
 
 async def acompletion_with_retry(
-    llm: Union[BaseOpenAI, OpenAIChat],
+    llm: Union[BaseOpenAI, FxOpenAIChat],
     run_manager: Optional[AsyncCallbackManagerForLLMRun] = None,
     **kwargs: Any,
 ) -> Any:
@@ -218,7 +218,7 @@ class BaseOpenAI(BaseLLM):
                 "no longer supported. Instead, please use: "
                 "`from langchain.chat_models import ChatOpenAI`"
             )
-            return OpenAIChat(**data)
+            return FxOpenAIChat(**data)
         return super().__new__(cls)
 
     class Config:
@@ -652,7 +652,7 @@ class FxOpenAI(BaseOpenAI):
         return {**{"model": self.model_name}, **super()._invocation_params}
 
 #
-class OpenAIChat(BaseLLM):
+class FxOpenAIChat(BaseLLM):
     """OpenAI Chat large language models.
 
     To use, you should have the ``openai`` python package installed, and the

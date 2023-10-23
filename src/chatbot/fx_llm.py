@@ -4,8 +4,7 @@ from langchain.callbacks.manager import CallbackManagerForLLMRun
 from langchain.llms.base import LLM
 
 class FxLLM(LLM):
-    n: int
-
+    
     @property
     def _llm_type(self) -> str:
         return "custom"
@@ -19,7 +18,9 @@ class FxLLM(LLM):
     ) -> str:
         if stop is not None:
             raise ValueError("stop kwargs are not permitted.")
-        return prompt[: self.n]
+        
+        print("模型回调")
+        return prompt
 
     @property
     def _identifying_params(self) -> Mapping[str, Any]:

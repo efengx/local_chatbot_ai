@@ -1,45 +1,139 @@
 # 参考：（GraphQL vs REST）https://aws.amazon.com/cn/compare/the-difference-between-graphql-and-rest/#:~:text=REST%20is%20good%20for%20simple,complex%2C%20and%20interrelated%20data%20sources.&text=REST%20has%20multiple%20endpoints%20in,has%20a%20single%20URL%20endpoint.
 # feature:（完成）添加本地缓存机制
 # feature:（完成）添加嵌入机制
-# feature: vector embedding 的原理（需要支持中文嵌入）
-# feature: 抽象cache init操作, 并进行初始化处理
-# feature: 抽象prompt结构, 并进行自定义
-# feature: 抽象llmresult结构, 并进行自定义
+# feature:（完成）vector embedding 的原理（需要支持中文嵌入）
+# feature:（完成）抽象cache init操作, 并进行初始化处理
+# feature:（完成）抽象prompt结构, 并进行自定义
+# feature:（完成）抽象llmresult结构, 并进行自定义
+# feature: 开发chat rag模型
+# feature: 自定义data storage信息
 from src.chatbot.fx_chat import FxChat
 from src.chatbot.fx_cache import FxCache
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.openapi.utils import get_openapi
-from pydantic import BaseModel
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel, Field
+from typing import Optional, Generic, TypeVar, Union, List, Annotated, Any
 
 fxCache = FxCache.instance()                                # 加载缓存环境（阻塞式）
+
+
 fxChat = FxChat.instance()                                  # 加载聊天机器人环境
+fxChat._load_cache()                                        # 加载缓存
+# fxChat._load_fxllm()                                        # 加载模型(自定义)
+# fxChat._load_chat_openai()                                  
+fxChat._load_FxOpenAI()
 
-
+# input
 class Item(BaseModel):
-    question: str
+    question: str = "酒店提供免费Wi-Fi服务吗？"
 
+class ItemPrompt(Item):
+    template_prompt: str = "你是名迪城市酒店(尖沙咀)的在线客服。\n{question}"
+
+class ItemRAG(Item):
+    template_prompt: str = """
+    鉴于此文本摘录：
+-----
+{context}
+-----
+请回答以下问题：
+{question}
+    """
+    documents: str = Field(
+        default="""
+        名迪城市酒店(尖沙咀) (Metacity Hotel (Tsim Sha Tsui)):
+**酒店地址**：名迪城市酒店(尖沙咀) 位于中国香港香港香港尖沙咀这个地理位置便利，毗邻城市的主要景点和商业区域。
+**房型：**名迪 - 標準雙人間,名迪 - 標準雙床房/雙人房,名迪 - 寬敞雙人間,名迪城市景觀 - 豪華家庭房,名迪城市景觀 - 豪華三人間,名迪城市豪华双人城景房,测试,钟点房测试宽敞而精致的名迪 - 標準雙人間配备现代化设施，为宾客提供一个温馨的栖息地，是商务旅行者和度假者的首选。
+**酒店设施：**名迪城市酒店(尖沙咀) 通常提供婴儿床,洗衣服务,酒吧,可提供相连房,Wi-Fi上网(公共区域),停车场[附近],按摩,花园,家庭房,儿童游泳池,行李存放服务,电梯,出租车服务,儿童活动室,行李员,保姆(需预约),每日客房清洁服务,24小时前台,票务服务,可捞带宠物,按摩游泳池,酒店设停车场,洗衣机,餐厅,客房清洁服务(限定时周),旅游服务,地铁[附近],无障碍通道,干洗,水疗,游泳池,24小时送餐服务,健身中心,快速办理入住/退房,所有客房免费WiFi,无障碍设施,24小时办理入住,礼宾服务,健身中心(24 小时),送餐服务(有限时间),吸烟区,保险箱一系列豪华的设施，以确保客人在住宿期间享受到最大的舒适和便利。
+如果您考虑入住我们名迪城市酒店，请拨打18600248705我们随时为您提供计划帮助。
+        """, title="这是RAG需要的文档"
+    )
+
+# 查询分页对象
+class PaginatedRequest(BaseModel):
+    limit: int = 10
+    offset: int = 0
+
+
+# output
+class Message(BaseModel):
+    message: str
+
+# 声明返回的分页对象
+class ChatRecord(BaseModel):
+    id: int
+    question: str
+    answer: str
+    
+class PaginatedResponse(BaseModel):
+    count: int = Field(description='Number of items returned in the response')
+    items: List[ChatRecord]
 
 app = FastAPI()
 
 
-@app.post("/predict/",  description="根据问题预测回答")
-async def predict(item: Item):
+# /cache/
+
+
+# /data/storage/list
+# /data/storage/save
+# /data/vector/list
+async def common_parameters(
+    limit: int = 10, offset: int = 0
+):
+    return {"limit": limit, "offset": offset}
+
+# response_model=PaginatedResponse
+@app.get("/data/storage/list", tags=["data"], 
+         description="查询sqlite数据",
+         response_model=PaginatedResponse)
+async def data_storage_list(commons: Annotated[dict, Depends(common_parameters)]) -> Any:
+    print(commons)
+    return PaginatedResponse(
+        count=fxCache.data_manager.s.count(), 
+        items=fxCache.paginate(limit=commons['limit'], offset=commons['offset']))
+
+@app.get("/data/storage/save", tags=["data"], description="保存storage信息")
+async def data_storage_save():
+    return ""
+
+# post /chat
+# post /chat/chain
+# post /chat/chain/rag
+
+@app.post("/chat", tags=["chat"], description="聊天")
+async def chat(item: Item):
     result = fxChat.predict(item.question)
     print(f"result={result}")
-    return {"message": result}
+    return {"result": result}
 
-@app.post("/chainllm/",  description="酒店客服")
-async def chainllm(item: Item):
-    result = fxChat.chainllm(item.question)
-    return {"message": result}
 
-@app.get("/cache/preloading", description="预先载入缓存")
-async def cachePreloading():
-    for data in open("input/hotelquestions.txt", "r"):
-        print(data)
+@app.post("/chat/chain", tags=["chat"], description="链式聊天")
+async def chat_chain(item: ItemPrompt):
+    result = fxChat.chainLlm(
+        question=item.question, 
+        template_prompt=item.template_prompt)
+    return {"result": result}
+
+
+@app.post("/chat/chain/rag", tags=["chat"], description="基于RAG的链式聊天")
+async def chat_chain_rag(item: ItemRAG):
+    result = fxChat.chainRagLlm(
+        template_prompt=item.template_prompt,
+        question=item.question,
+        document=item.documents
+    )
+    return {"result": result}
+
+
+# @app.get("/cache/preloading", description="预先载入缓存")
+# async def cachePreloading():
+#     for data in open("input/hotelquestions.txt", "r"):
+#         print(data)
     
-    fxCache.search()
-    return {"message": ""}
+#     fxCache.search()
+#     return {"result": ""}
 
 
 # openapi 基础文档结构

@@ -1,12 +1,13 @@
 # 初始化gptcache
-import langchain
+# import langchain
 from gptcache import Cache
-from gptcache.processor.pre import get_prompt
+# from gptcache.processor.pre import get_prompt
 from gptcache.manager import CacheBase, VectorBase, get_data_manager
 from gptcache.similarity_evaluation.distance import SearchDistanceEvaluation
 from gptcache.adapter.api import init_similar_cache
 from gptcache.embedding import Huggingface
-from gptcache.embedding import onnx
+# from gptcache.embedding import onnx
+# from sqlalchemy import create_engine, inspect, func, select
 
 class FxCache(object):
     
@@ -26,21 +27,21 @@ class FxCache(object):
         return cls._instance
     
     def _init(self):
-        self.embed_model = Huggingface(model="BAAI/bge-small-zh-v1.5")                      # 对应的SearchDistanceEvaluation max_distance = 0.4
+        self.embed_model = Huggingface(model="BAAI/bge-small-zh-v1.5")                          # 对应的SearchDistanceEvaluation max_distance = 0.4
         print("FxCache embed model")
         self.cache_base = CacheBase('sqlite', 
                                     sql_url="sqlite:///./db/sqlite.db")
         print("FxCache sqlite")
-        # self.vector_base = VectorBase('milvus',                                             # 远程milvus服务器
-        #                               host='39.104.228.125', 
-        #                               dimension=self.embed_model.dimension)
-        self.vector_base = VectorBase('milvus',                                               # 本地连接milvus服务器
-                                      host='localhost', 
+        self.vector_base = VectorBase('milvus',                                               # 远程milvus服务器
+                                      host='39.104.228.125', 
                                       dimension=self.embed_model.dimension)
-        # self.vector_base = VectorBase('milvus',                                             # 嵌入式milvus（需要抽象成数据微服务）
+        # self.vector_base = VectorBase('milvus',                                                 # 本地连接milvus服务器
+        #                               host='localhost', 
+        #                               dimension=self.embed_model.dimension)
+        # self.vector_base = VectorBase('milvus',                                               # 嵌入式milvus（需要抽象成数据微服务）
         #                               local_mode=True, 
         #                               local_data="./db/milvus_data", 
-        #                               dimension=self.embed_model.dimension)    
+        #                               dimension=self.embed_model.dimension)
         print("FxCache load milvus") 
         self.data_manager = get_data_manager(self.cache_base, self.vector_base)
         print("FxCache data_manager")
@@ -91,3 +92,15 @@ class FxCache(object):
             embedding=self.embed_model,
             evaluation=SearchDistanceEvaluation(max_distance=0.4)
         )
+    
+    # 依赖倒置，将sqlalchemy转换成字典, 便于fastapi序列化
+    @staticmethod
+    def as_dict(obj):
+       return {c.name: str(getattr(obj, c.name)) for c in obj.__table__.columns}
+    
+    def paginate(self, limit: int, offset: int):
+        session = self.cache_base.Session()
+        
+        return [item._mapping for item in session.query(
+                self.cache_base._answer.id, self.cache_base._answer.answer, self.cache_base._ques.question).filter(
+                self.cache_base._answer.question_id == self.cache_base._ques.id).limit(limit).offset(offset)]

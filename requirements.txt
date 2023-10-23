@@ -16,9 +16,12 @@ llama-cpp-python
 # UI: streamlit plug fastapi
 streamlit
 fastapi
-"uvicorn[standard]"
+uvicorn[standard]
 
 # cache
 gptcache
 pymilvus
 milvus                              # 嵌入式 milvus
+
+# cli
+fire
