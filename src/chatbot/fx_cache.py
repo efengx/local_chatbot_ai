@@ -1,5 +1,6 @@
 # 初始化gptcache
 # import langchain
+import os
 from gptcache import Cache
 # from gptcache.processor.pre import get_prompt
 from gptcache.manager import CacheBase, VectorBase, get_data_manager
@@ -8,6 +9,10 @@ from gptcache.adapter.api import init_similar_cache
 from gptcache.embedding import Huggingface
 # from gptcache.embedding import onnx
 # from sqlalchemy import create_engine, inspect, func, select
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class FxCache(object):
     
@@ -33,7 +38,7 @@ class FxCache(object):
                                     sql_url="sqlite:///./db/sqlite.db")
         print("FxCache sqlite")
         self.vector_base = VectorBase('milvus',                                               # 远程milvus服务器
-                                      host='39.104.228.125', 
+                                      host=os.getenv('MILVUS_HOST'), 
                                       dimension=self.embed_model.dimension)
         # self.vector_base = VectorBase('milvus',                                                 # 本地连接milvus服务器
         #                               host='localhost', 

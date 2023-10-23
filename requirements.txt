@@ -1,5 +1,6 @@
 # development environment
-ipywidgets
+# ipywidgets
+torch==1.11.*
 
 # Base: app dependency
 pinecone-client
