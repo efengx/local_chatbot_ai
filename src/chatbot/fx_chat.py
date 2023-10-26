@@ -78,7 +78,7 @@ class FxChat(object):
         self.step = 2
 
     def _load_fxllm(self):                                              # 自定义模型
-        self.llm = FxLLM(n=10)
+        self.llm = FxLLM()
         self.step = 2
 
     def _load_chat_openai(self):

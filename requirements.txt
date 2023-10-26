@@ -18,11 +18,17 @@ llama-cpp-python
 streamlit
 fastapi
 uvicorn[standard]
+st-pages                            # 多页app web ui
 
 # cache
 gptcache
 pymilvus
 milvus                              # 嵌入式 milvus
+redis-om
+redis
+
+# autogen
+pyautogen
 
 # cli
 fire

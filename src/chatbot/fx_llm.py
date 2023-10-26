@@ -18,11 +18,10 @@ class FxLLM(LLM):
     ) -> str:
         if stop is not None:
             raise ValueError("stop kwargs are not permitted.")
-        
-        print("模型回调")
-        return prompt
+        print("缓存未命中")
+        return "自定义内容"
 
     @property
     def _identifying_params(self) -> Mapping[str, Any]:
         """Get the identifying parameters."""
-        return {"n": self.n}
+        return {}

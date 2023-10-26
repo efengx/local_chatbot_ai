@@ -99,15 +99,29 @@ async def data_storage_save():
     return ""
 
 # post /chat
+# get /chat/{model_name}
 # post /chat/chain
 # post /chat/chain/rag
 
+@app.get("/chat/{model_name}", tags=["chat"])
+async def chatModel(model_name: str = "openai"):
+    # 模型映射列表
+    map_model = {
+        "openai": fxChat._load_FxOpenAI,
+        "fxllm": fxChat._load_fxllm,
+    }
+    if map_model.get(model_name) is None:
+        return "model_name not found. model_name value: openai, fxllm"
+    else:
+        map_model[model_name]()
+        return "success"
+    
+    
 @app.post("/chat", tags=["chat"], description="聊天")
 async def chat(item: Item):
     result = fxChat.predict(item.question)
     print(f"result={result}")
     return {"result": result}
-
 
 @app.post("/chat/chain", tags=["chat"], description="链式聊天")
 async def chat_chain(item: ItemPrompt):
