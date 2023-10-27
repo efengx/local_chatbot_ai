@@ -12,3 +12,5 @@ db
 data
 input
 *.sh
+fx_frontend
+fx_backend

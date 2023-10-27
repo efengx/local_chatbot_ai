@@ -32,7 +32,9 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 
 # 安装 milvus v2.3.1 (分布式)
 wget https://github.com/milvus-io/milvus/releases/download/v2.3.1/milvus-standalone-docker-compose.yml -O docker-compose.yml \
-    && sudo docker compose up -d \
-    && docker run -p 8000:3000 -e MILVUS_URL=192.168.0.107:19530 zilliz/attu:latest
+    && sudo docker compose up -d
+
+# 可以安装到本地作为ide
 # 安装 attu -e HOST_URL=http://39.104.228.125:8000
+docker run -p 8000:3000 -e MILVUS_URL=172.18.0.1:19530 -it zilliz/attu:latest
 # 账号/密码：minioadmin/minioadmin

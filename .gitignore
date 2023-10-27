@@ -17,6 +17,8 @@ db
 data
 local_pro
 
+fx_frontend
+fx_backend
 
 # tmp
 fx_launch.ipynb
