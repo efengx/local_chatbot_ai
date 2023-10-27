@@ -23,4 +23,3 @@ fx_launch.ipynb
 fx_service.ipynb
 fx_env.ipynb
 fx_docker.ipynb
-*.sh
