@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+
+  frontend:
+    build: 
+      context: ./
+      dockerfile: ./docker/frontend/Dockerfile
+    ports:
+     - "9000:80"
+
+  # backend:
+  #   build: 
+  #     context: ./                                             # 指定当前文件路径
+  #     dockerfile: ./docker/backend/Dockerfile
+  #   ports:
+  #     - "8080:80"

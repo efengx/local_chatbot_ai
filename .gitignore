@@ -12,10 +12,11 @@ models
 # local
 docs
 input
-docker/flowise
+docker/backend
 db
 data
 local_pro
+
 
 # tmp
 fx_launch.ipynb

@@ -61,6 +61,19 @@ class FxChat(object):
         # self.llm = FxOpenAI(model_name="text-davinci-002", n=2, best_of=2)
         self.llm = FxOpenAI(model_name="gpt-4")
         self.step = 2
+    
+    def _load_FxOpenAI_human(self):
+        print(f"FxChat._load_FxOpenAI: {self.step} {self.model_type}")
+        if self.model_type == "FxOpenAIHuman":
+            return
+
+        os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
+        
+        self.step = 1
+        self.model_type = "FxOpenAIHuman"
+        # self.llm = FxOpenAI(model_name="text-davinci-002", n=2, best_of=2)
+        self.llm = FxOpenAI(model_name="gpt-4", fx_main="human")
+        self.step = 2
 
     def _load_llama2_chat_q4(self):
         print(f"FxChat._load_llama2_chat_q4: {self.step} {self.model_type}")
@@ -78,6 +91,8 @@ class FxChat(object):
         self.step = 2
 
     def _load_fxllm(self):                                              # 自定义模型
+        self.step = 1
+        self.model_type = "fxllm"
         self.llm = FxLLM()
         self.step = 2
 
@@ -110,6 +125,11 @@ class FxChat(object):
         return result
 
     def chainRagLlm(self, template_prompt: str, question: str, document: list):
+        if self.step != 2:
+            return "模型加载中请稍后!"
+        
+        print("chainRegLLm model_type:", self.model_type)
+        
         prompt = PromptTemplate(
             template=template_prompt, 
             input_variables=["context", "question"]
@@ -137,7 +157,7 @@ class FxChat(object):
             embedding=self.embeddings,
             connection_args={"host": os.getenv('MILVUS_HOST')}).as_retriever(search_kwargs={"k": 1})
         docs = retriever.get_relevant_documents(question)
-        print("docs=", docs)
+        
         # 重新对文档进行排序，相关性较高的位于文档的开头和结尾，相关性较低的位于中间
         # reordering = LongContextReorder()
         # reordered_docs = reordering.transform_documents(docs)

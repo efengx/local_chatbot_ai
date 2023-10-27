@@ -47,14 +47,14 @@ class ItemRAG(Item):
 **房型：**名迪 - 標準雙人間,名迪 - 標準雙床房/雙人房,名迪 - 寬敞雙人間,名迪城市景觀 - 豪華家庭房,名迪城市景觀 - 豪華三人間,名迪城市豪华双人城景房,测试,钟点房测试宽敞而精致的名迪 - 標準雙人間配备现代化设施，为宾客提供一个温馨的栖息地，是商务旅行者和度假者的首选。
 **酒店设施：**名迪城市酒店(尖沙咀) 通常提供婴儿床,洗衣服务,酒吧,可提供相连房,Wi-Fi上网(公共区域),停车场[附近],按摩,花园,家庭房,儿童游泳池,行李存放服务,电梯,出租车服务,儿童活动室,行李员,保姆(需预约),每日客房清洁服务,24小时前台,票务服务,可捞带宠物,按摩游泳池,酒店设停车场,洗衣机,餐厅,客房清洁服务(限定时周),旅游服务,地铁[附近],无障碍通道,干洗,水疗,游泳池,24小时送餐服务,健身中心,快速办理入住/退房,所有客房免费WiFi,无障碍设施,24小时办理入住,礼宾服务,健身中心(24 小时),送餐服务(有限时间),吸烟区,保险箱一系列豪华的设施，以确保客人在住宿期间享受到最大的舒适和便利。
 如果您考虑入住我们名迪城市酒店，请拨打18600248705我们随时为您提供计划帮助。
-        """, title="这是RAG需要的文档"
+        """, 
+        title="这是RAG需要的文档"
     )
 
 # 查询分页对象
 class PaginatedRequest(BaseModel):
     limit: int = 10
     offset: int = 0
-
 
 # output
 class Message(BaseModel):
@@ -103,20 +103,21 @@ async def data_storage_save():
 # post /chat/chain
 # post /chat/chain/rag
 
+# 该方法存在缓存调用异常，需要重新梳理llm请求生命周期
 @app.get("/chat/{model_name}", tags=["chat"])
 async def chatModel(model_name: str = "openai"):
     # 模型映射列表
     map_model = {
         "openai": fxChat._load_FxOpenAI,
-        "fxllm": fxChat._load_fxllm,
+        "openai_human": fxChat._load_FxOpenAI_human,
     }
     if map_model.get(model_name) is None:
-        return "model_name not found. model_name value: openai, fxllm"
+        return "model_name not found. model_name value: openai, openai_human"
     else:
         map_model[model_name]()
-        return "success"
+        return {"model_type": fxChat.model_type, "step": fxChat.step}
     
-    
+
 @app.post("/chat", tags=["chat"], description="聊天")
 async def chat(item: Item):
     result = fxChat.predict(item.question)

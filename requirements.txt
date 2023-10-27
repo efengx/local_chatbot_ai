@@ -10,15 +10,14 @@ pypdf
 sentence-transformers
 faiss-cpu
 ctransformers
+python-dotenv
 
 ## Increment: llama index
 llama-cpp-python
 
 # UI: streamlit plug fastapi
-streamlit
 fastapi
 uvicorn[standard]
-st-pages                            # 多页app web ui
 
 # cache
 gptcache

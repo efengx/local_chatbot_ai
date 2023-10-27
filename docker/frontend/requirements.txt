@@ -1,0 +1,6 @@
+# main_web.py
+# development environment
+streamlit
+st-pages                            # 多页app web ui
+python-dotenv
+streamlit-elements==0.1.0

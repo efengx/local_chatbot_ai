@@ -1,5 +1,6 @@
 # Human operation
 import streamlit as st
+import src.webui.session
 from st_pages import Page, show_pages, add_page_title
 
 
@@ -11,7 +12,6 @@ st.set_page_config(
 
 add_page_title()
 
-# 页面跳转
 # Specify what pages should be shown in the sidebar, and what their titles and icons
 # should be
 show_pages(

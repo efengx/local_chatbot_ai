@@ -1,8 +1,9 @@
 # 初始化gptcache
 # import langchain
 import os
-from gptcache import Cache
-# from gptcache.processor.pre import get_prompt
+from typing import Dict, Any
+from gptcache import Cache, Config
+from gptcache.processor.pre import get_prompt
 from gptcache.manager import CacheBase, VectorBase, get_data_manager
 from gptcache.similarity_evaluation.distance import SearchDistanceEvaluation
 from gptcache.adapter.api import init_similar_cache
@@ -13,6 +14,26 @@ from gptcache.embedding import Huggingface
 from dotenv import load_dotenv
 
 load_dotenv()
+
+
+def get_prompt_split(data: Dict[str, Any], **_: Dict[str, Any]) -> Any:
+    """get the prompt of the llm request params
+
+    :param data: the user llm request data
+    :type data: Dict[str, Any]
+
+    Example:
+        .. code-block:: python
+
+            from gptcache.processor.pre import get_prompt
+
+            content = get_prompt({"prompt": "----- hello world ----- foo"})
+            # " foo"
+    """
+    list_data = data.get("prompt").split("-----")
+    data = list_data[len(list_data)-1]
+    print("需要向量比较的内容:", data)
+    return data
 
 class FxCache(object):
     
@@ -94,10 +115,12 @@ class FxCache(object):
         init_similar_cache(                                                                              # 初始化缓存
             cache_obj=cache_obj,
             data_manager=self.data_manager,
+            pre_func=get_prompt_split,                                                                         # 设置需要比较的问题 = pre_embedding_func
             embedding=self.embed_model,
-            evaluation=SearchDistanceEvaluation(max_distance=0.4)
+            evaluation=SearchDistanceEvaluation(max_distance=0.4),
+            # config=Config(data_check=True),
         )
-    
+
     # 依赖倒置，将sqlalchemy转换成字典, 便于fastapi序列化
     @staticmethod
     def as_dict(obj):

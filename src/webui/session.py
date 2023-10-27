@@ -1,6 +1,7 @@
 # 全局session函数
 import streamlit as st
 import os
+import json
 import requests
 from dotenv import load_dotenv
 
@@ -25,38 +26,40 @@ documents = """
 """
 
 # 初始化
-if 'ai_service' not in st.session_state:
-    st.session_state['ai_service'] = os.getenv('HOST_PORT')
+class Session:
+    def __init__(self):
+        if 'template_prompt' not in st.session_state:
+            print("init template_prompt")
+            st.session_state['template_prompt'] = template_prompt
+            
+        if 'documents' not in st.session_state:
+            print("init document")
+            st.session_state['documents'] = documents
+            
+        if "messages" not in st.session_state:
+            st.session_state.messages = []
 
-if 'template_prompt' not in st.session_state:
-    st.session_state['template_prompt'] = template_prompt
-    
-if 'documents' not in st.session_state:
-    st.session_state['documents'] = documents
-
-# 函数封装
 def data_get(key):
     return st.session_state[key]
-    
-# def data_set(key, value):
-#     st.session_state[key] = value
 
 # 获取data strage数据
 class Data:
     
     def getStorageList(limit: int = 10, offset: int = 0):
         data_request = requests.get(
-            "{0}data/storage/list".format(data_get("ai_service")), 
+            "{0}data/storage/list".format(os.getenv('HOST_PORT')), 
             params={"limit": limit, "offset": offset})
         print(data_request.url)
-        print(data_request.text)
+        # print(data_request.text)
+        return json.loads(data_request.text)
 
 class Chat:
     
     def chainRag(question):
         chat_request = requests.post(
-            "{0}chat/chain/rag".format(data_get("ai_service")),
-            json={"question": question, "template_prompt": data_get('template_prompt'), "documents": data_get('documents')}
+            "{0}chat/chain/rag".format(os.getenv('HOST_PORT')),
+            json={"question": question, 
+                  "template_prompt": st.session_state['template_prompt'], 
+                  "documents": st.session_state['documents']}
         )
-        print(chat_request.url)
-        print(chat_request.text)
+        return json.loads(chat_request.text)

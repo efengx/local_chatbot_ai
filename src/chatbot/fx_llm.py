@@ -18,7 +18,7 @@ class FxLLM(LLM):
     ) -> str:
         if stop is not None:
             raise ValueError("stop kwargs are not permitted.")
-        print("缓存未命中")
+        print("缓存未命中, prompt=", prompt)
         return "自定义内容"
 
     @property

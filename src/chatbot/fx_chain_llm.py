@@ -90,7 +90,7 @@ class FxLLMChain(Chain):
         inputs: Dict[str, Any],
         run_manager: Optional[CallbackManagerForChainRun] = None,
     ) -> Dict[str, str]:
-        print("fx_chain_llm._call")
+        print("fx_chain_llm._call 模型的inputs=", inputs)
         response = self.generate([inputs], run_manager=run_manager)
         return self.create_outputs(response)[0]
 

@@ -2,14 +2,13 @@
 .venv
 .github
 .vscode
-.docker-compose.yml
 .gitignore
 .tool-versions
-Dockerfile
-docker
 
 # project
 *.ipynb
 models
 db
+data
+input
 *.sh

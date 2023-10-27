@@ -99,7 +99,7 @@ def _create_retry_decorator(
         error_types=errors, max_retries=llm.max_retries, run_manager=run_manager
     )
 
-
+# 调用openai模型
 def completion_with_retry(
     llm: Union[BaseOpenAI, FxOpenAIChat],
     run_manager: Optional[CallbackManagerForLLMRun] = None,
@@ -831,6 +831,11 @@ class FxOpenAIChat(BaseLLM):
 
         messages, params = self._get_chat_params(prompts, stop)
         params = {**params, **kwargs}
+        
+        if params.get('fx_main') and params.get('fx_main') == 'human':
+            return LLMResult(generations=[[Generation(text="知识库未命中，由人类回答!")]])
+        
+        print("fx_open_llm _generate 缓存未命中，调用open llm模型进行查询")
         full_response = completion_with_retry(
             self, messages=messages, run_manager=run_manager, **params
         )
@@ -838,6 +843,7 @@ class FxOpenAIChat(BaseLLM):
             "token_usage": full_response["usage"],
             "model_name": self.model_name,
         }
+        # 此处可以手动常见LLMResult信息
         return LLMResult(
             generations=[
                 [Generation(text=full_response["choices"][0]["message"]["content"])]

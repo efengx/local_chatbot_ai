@@ -1,16 +1,13 @@
 import streamlit as st
-import time
-import numpy as np
-from src.webui.session import Chat
+import json
+from src.webui.session import Chat, Session
 
-# 初始化
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+Session()
 
 # page ui
 st.set_page_config(page_title="聊天客服", page_icon="📞", layout="wide")
 
-st.title("酒店在线客服")
+st.write("酒店在线客服")
 
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
@@ -23,7 +20,10 @@ if question := st.chat_input("说些什么？"):
     
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
-        Chat.chainRag(question)
-        full_response = "1111111144444444"
+        response = Chat.chainRag(question)
+        if response.get("result") is not None:
+            full_response = response["result"]
+        else:
+            full_response = "服务器调用失败."
         message_placeholder.markdown(full_response)
     st.session_state.messages.append({"role": "assistant", "content": full_response})
