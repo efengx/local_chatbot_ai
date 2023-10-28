@@ -11,7 +11,10 @@
 . step1: 安装依赖
 
 ```bash
-pip install -r requirements.txt
+# rest api 依赖
+pip install -r ./docker/backend/requirements.txt
+# web ui 依赖
+pip install -r ./docker/frontend/requirements.txt
 ```
 
 . step2: 下载models

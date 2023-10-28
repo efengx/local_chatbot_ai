@@ -44,7 +44,7 @@ class FxStdOutCallbackHandler(BaseCallbackHandler):
 
     def on_chain_end(self, outputs: Dict[str, Any], **kwargs: Any) -> None:
         """Print out that we finished a chain."""
-        print("\n\033[1m> Finished chain.\033[0m")
+        print("聊天完成后的回调函数, outputs=", outputs)
 
     def on_chain_error(self, error: BaseException, **kwargs: Any) -> None:
         """Do nothing."""

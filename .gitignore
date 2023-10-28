@@ -12,7 +12,6 @@ models
 # local
 docs
 input
-docker/backend
 db
 data
 local_pro

@@ -62,7 +62,7 @@ def _import_tiktoken() -> Any:
 
 
 def _create_retry_decorator(
-    llm: ChatOpenAI,
+    llm: FxChatOpenAI,
     run_manager: Optional[
         Union[AsyncCallbackManagerForLLMRun, CallbackManagerForLLMRun]
     ] = None,
@@ -82,7 +82,7 @@ def _create_retry_decorator(
 
 
 async def acompletion_with_retry(
-    llm: ChatOpenAI,
+    llm: FxChatOpenAI,
     run_manager: Optional[AsyncCallbackManagerForLLMRun] = None,
     **kwargs: Any,
 ) -> Any:
@@ -357,9 +357,14 @@ class FxChatOpenAI(BaseChatModel):
             return _generate_from_stream(stream_iter)
         message_dicts, params = self._create_message_dicts(messages, stop)
         params = {**params, **kwargs}
+        
+        print("fx_chat_openai 调用openai服务")
+        print("message_dicts=", message_dicts)
+        print("params=", params)
         response = self.completion_with_retry(
             messages=message_dicts, run_manager=run_manager, **params
         )
+        print("response=", response)
         return self._create_chat_result(response)
 
     def _create_message_dicts(

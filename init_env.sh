@@ -26,8 +26,9 @@ echo \
 sudo apt-get update
 # 安装 docker
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-
-
+# 测试 docker 安装情况
+docker run -d -p 8008:9000 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
+# 打开：http://localhost:8000
 
 
 # 安装 milvus v2.3.1 (分布式)
@@ -36,5 +37,6 @@ wget https://github.com/milvus-io/milvus/releases/download/v2.3.1/milvus-standal
 
 # 可以安装到本地作为ide
 # 安装 attu -e HOST_URL=http://39.104.228.125:8000
-docker run -p 8000:3000 -e MILVUS_URL=172.18.0.1:19530 -it zilliz/attu:latest
+# -e MILVUS_URL=172.18.0.1:19530
+docker run -p 8001:3000  -it zilliz/attu:latest
 # 账号/密码：minioadmin/minioadmin

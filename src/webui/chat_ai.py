@@ -1,19 +1,51 @@
 import streamlit as st
 import json
-from src.webui.session import Chat, Session
+from src.webui.session import Chat, session
+from streamlit_elements import elements, mui, html
 
-Session()
+session.setSession()
 
 # page ui
 st.set_page_config(page_title="聊天客服", page_icon="📞", layout="wide")
 
+if 'test1' not in st.session_state:
+    st.session_state['test1'] = "2222"
+
+# 左侧边栏目
+with st.sidebar:
+    st.toggle('调试模式', key="is_cache")
+    
+    st.text_area(
+        "system message:",
+        key="prompt_system",
+        height=200,
+    )
+    
+    st.text_area(
+        'system message context:',
+        key="documents",
+        height=200,
+    )
+    
+    st.text_area(
+        'human message:',
+        key="prompt_human",
+        height=100,
+    )
+    
+    st.text_area(
+        'model params:',
+        key="model_params",
+        height=100,
+    )
+        
 st.write("酒店在线客服")
 
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-if question := st.chat_input("说些什么？"):
+if question := st.chat_input("question"):
     with st.chat_message("user"):
         st.markdown(question)
     st.session_state.messages.append({"role": "user", "content": question})

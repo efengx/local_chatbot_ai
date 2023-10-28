@@ -4,7 +4,18 @@
     // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-    
+        {
+            "name": "Python: Streamlit",
+            "type": "python",
+            "request": "launch",
+            "module": "streamlit",
+            "args": [
+                "run",
+                "main_web.py"
+            ],
+            "jinja": true,
+            "justMyCode": false
+        },
         {
             "name": "Python: FastAPI",
             "type": "python",

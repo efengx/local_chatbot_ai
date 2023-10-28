@@ -100,9 +100,9 @@ class FxLLMChain(Chain):
         run_manager: Optional[CallbackManagerForChainRun] = None,
     ) -> LLMResult:
         """Generate LLM result from inputs."""
-        print("fx_chain_llm.generate")
         prompts, stop = self.prep_prompts(input_list, run_manager=run_manager)
         # self.llm.generate_prompt：会监控缓存，如果缓存中存在
+        print("fx_chain_llm.generate prompts=", prompts)
         return self.llm.generate_prompt(
             prompts,
             stop,

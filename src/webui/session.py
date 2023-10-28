@@ -8,13 +8,15 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # 静态常量
-template_prompt = """
-鉴于此文本摘录：
------
+prompt_system = """
+您好GPT，请扮演一个香港小型酒店客服并根据以下context去回答问题，如果context未涵盖问题，请根据你的知识库来回答问题,甚至是猜测，尽你最大可能去回答问题而不是回避问题。一定要注意这些事项：
+不要暴露出自己是ai；
+不要表示出你是根据context来回答问题的，如果context里面没有涉及到问题，就直接回答问题，不要回答信息不够或者没有提及；
+不要让回答让客人打电话去询问，除非客人是直接询问电话号码；
+可以基于常识的理解去回答；
+
+context为：
 {context}
------
-请回答以下问题：
-{question}
 """
 
 documents = """
@@ -25,41 +27,76 @@ documents = """
 如果您考虑入住我们名迪城市酒店，请拨打18600248705我们随时为您提供计划帮助。
 """
 
+prompt_human = """{question}"""
+
+model_params = json.dumps({"temperature": 0.8, "n": 1, "organization": ""})
+
 # 初始化
-class Session:
-    def __init__(self):
-        if 'template_prompt' not in st.session_state:
-            print("init template_prompt")
-            st.session_state['template_prompt'] = template_prompt
-            
+
+
+class FxSession(object):
+
+    def __new__(cls):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(FxSession, cls).__new__(cls)
+        return cls.instance
+
+    def setSession(self):
+        print("初始化fxSession")
+        if 'is_cache' not in st.session_state:
+            st.session_state['is_cache'] = False
+
+        if 'prompt_system' not in st.session_state:
+            st.session_state['prompt_system'] = prompt_system
+
         if 'documents' not in st.session_state:
             print("init document")
             st.session_state['documents'] = documents
+
+        if "prompt_human" not in st.session_state:
+            st.session_state['prompt_human'] = prompt_human
             
+        if "model_params" not in st.session_state:
+            st.session_state['model_params'] = model_params
+
         if "messages" not in st.session_state:
             st.session_state.messages = []
 
-def data_get(key):
-    return st.session_state[key]
+        return self
+
+    def data_get(key):
+        return st.session_state[key]
 
 # 获取data strage数据
+
+
 class Data:
-    
+
     def getStorageList(limit: int = 10, offset: int = 0):
         data_request = requests.get(
-            "{0}data/storage/list".format(os.getenv('HOST_PORT')), 
+            "{0}data/storage/list".format(os.getenv('HOST_PORT')),
             params={"limit": limit, "offset": offset})
         print(data_request.url)
         # print(data_request.text)
         return json.loads(data_request.text)
 
+
 class Chat:
-    
+
     def chainRag(question):
+        data_json = {"load_model": "FxChatOpenAI",
+                     "prompt_system": st.session_state['prompt_system'],
+                     "documents": st.session_state['documents'],
+                     "prompt_human": st.session_state['prompt_human'],
+                     "question": question,
+                     "is_cache": not bool(st.session_state['is_cache']),
+                     "meta_data": st.session_state['model_params']}
         chat_request = requests.post(
             "{0}chat/chain/rag".format(os.getenv('HOST_PORT')),
-            json={"question": question, 
-                  "template_prompt": st.session_state['template_prompt'], 
-                  "documents": st.session_state['documents']}
+            json=data_json
         )
         return json.loads(chat_request.text)
+
+
+# 开启单例模式
+session = FxSession()
