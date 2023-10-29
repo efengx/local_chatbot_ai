@@ -1,41 +1,44 @@
 import streamlit as st
-import json
 from src.webui.session import Chat, session
-from streamlit_elements import elements, mui, html
 
-session.setSession()
+session.setSession(count=20)
 
 # page ui
 st.set_page_config(page_title="聊天客服", page_icon="📞", layout="wide")
 
-if 'test1' not in st.session_state:
-    st.session_state['test1'] = "2222"
-
 # 左侧边栏目
 with st.sidebar:
-    st.toggle('调试模式', key="is_cache")
+    st.toggle(
+        '调试模式', 
+        key="is_cache",
+        value=st.session_state['is_cache'],
+    )
     
     st.text_area(
         "system message:",
         key="prompt_system",
+        value=st.session_state['prompt_system'],
         height=200,
     )
     
     st.text_area(
         'system message context:',
         key="documents",
+        value=st.session_state['documents'],
         height=200,
     )
     
     st.text_area(
         'human message:',
         key="prompt_human",
+        value=st.session_state['prompt_human'],
         height=100,
     )
     
     st.text_area(
         'model params:',
         key="model_params",
+        value=st.session_state['model_params'],
         height=100,
     )
         

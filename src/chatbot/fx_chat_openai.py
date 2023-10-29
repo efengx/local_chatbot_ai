@@ -294,6 +294,7 @@ class FxChatOpenAI(BaseChatModel):
 
         @retry_decorator
         def _completion_with_retry(**kwargs: Any) -> Any:
+            print("调用chat openai, 不断的重试")
             return self.client.create(**kwargs)
 
         return _completion_with_retry(**kwargs)

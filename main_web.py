@@ -4,10 +4,10 @@ from st_pages import Page, show_pages, add_page_title
 
 
 # 多页应用程序：入口页
-st.set_page_config(
-    page_title="rjxai",
-    page_icon="👋",
-)
+# st.set_page_config(
+#     page_title="rjxai",
+#     page_icon="👋",
+# )
 
 add_page_title()
 

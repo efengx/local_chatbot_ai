@@ -14,3 +14,4 @@ input
 *.sh
 fx_frontend
 fx_backend
+OAI_CONFIG_LIST.json
