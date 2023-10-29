@@ -6,9 +6,9 @@
 
 支持RAG（外部知识库检索增强）.
 
-```
-![alt text](http://url/to/img.png)
-```
+![alt text](https://github.com/efengx/local_chatbot_ai/blob/main/resource/chat_1.jpg)
+
+![alt text](https://github.com/efengx/local_chatbot_ai/blob/main/resource/data_1.jpg?raw=true)
 
 
 ## ⚡️ 快速开始
