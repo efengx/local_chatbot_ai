@@ -6,6 +6,11 @@
 
 支持RAG（外部知识库检索增强）.
 
+```
+![alt text](http://url/to/img.png)
+```
+
+
 ## ⚡️ 快速开始
 
 . step1: 安装依赖
