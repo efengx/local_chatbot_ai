@@ -1,19 +1,18 @@
 # local chatbot ai
 
-以在个人消费设备上运行为主要设计原则的local chatbot ai.
+Local chatbot ai with the main design principle of running on personal consumer devices.
 
-这是一个对于相似问题可以非常快响应的智能聊天ai.
+This is an intelligent chat AI that can respond very quickly to similar questions.
 
-支持RAG（外部知识库检索增强）.
+Supports RAG (Retrieval Augmentation for External Knowledge Bases).
 
-![alt text](https://github.com/efengx/local_chatbot_ai/blob/main/resource/chat_1.jpg)
+![alt text](https://github.com/efengx/local_chatbot_ai/blob/main/resource/chat_1.jpg?raw=true)
 
 ![alt text](https://github.com/efengx/local_chatbot_ai/blob/main/resource/data_1.jpg?raw=true)
 
+## ⚡️ Quick start
 
-## ⚡️ 快速开始
-
-. step1: 安装依赖
+. step1: Install dependencies
 
 ```bash
 # rest api 依赖
@@ -22,7 +21,7 @@ pip install -r ./docker/backend/requirements.txt
 pip install -r ./docker/frontend/requirements.txt
 ```
 
-. step2: 下载models
+. step2: Download models
 
 ```python
 # fx_data.ipynb
@@ -34,7 +33,7 @@ hf_hub_download(repo_id="TheBloke/Llama-2-13B-chat-GGUF",
 
 ```
 
-. step3: 开启本地数据微服务milvus
+. step3: Start the local data microservice milvus
 
 ```python
 # fx_data.ipynb
@@ -44,7 +43,7 @@ localMilvus = LocalMilvus.instance()
 localMilvus.start()
 ```
 
-. step4: 开启restapi服务
+. step4.1: Start restapi service
 
 ```shell
 $ uvicorn main_restapi:app --reload
@@ -56,6 +55,12 @@ INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 ```
 
-## 联系方式
+. step4.2: Start web ui service
 
-如果您有任何问题、反馈意见或想要联系我们，欢迎随时通过电子邮件与我们联系： [ixiang1926@outlook.com](mailto:ixiang1926@outlook.com)
+```bash
+$ streamlit run main_web.py
+```
+
+## Contact
+
+If you have any questions, feedback or would like to contact us, please feel free to contact us via email: [ixiang1926@outlook.com](mailto:ixiang1926@outlook.com)
