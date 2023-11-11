@@ -33,3 +33,4 @@ fire
 # 参考：https://microsoft.github.io/autogen/docs/getting-started
 pyautogen
 chess                             # pip install chess -U
+autogenui                         # 实验性UI

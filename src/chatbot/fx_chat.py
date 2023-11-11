@@ -61,7 +61,11 @@ class FxChat:
         return cls
     
     @classmethod
-    def chainRagLlm(cls, prompt_system: str, document: str, prompt_human: str, question: str, ):
+    def chainRagLlm(cls, prompt_system: str, document: str, prompt_human: str, question: str, repository_name: str):
+        # 刷新Vector，创建多个不同的知识库，只在单一知识库中进行搜索
+        fxCache.reBuildVectorBase(repository_name=repository_name)
+        
+        # prompt
         system_message_prompt = SystemMessagePromptTemplate.from_template(prompt_system)
         human_message_prompt = HumanMessagePromptTemplate.from_template(prompt_human)
         chat_prompt = ChatPromptTemplate.from_messages([system_message_prompt, human_message_prompt])
